@@ -1,20 +1,52 @@
-import { Injectable } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
-import { RegisterDto } from './dto/register.dto';
-import { Repository } from 'typeorm';
-import { User } from 'src/database/entities/user.entity';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '../database/entities/user.entity';
+import { Repository } from 'typeorm';
+import { LoginDto } from './dto/login.dto';
+import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
+import { ConfigService } from '@nestjs/config';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User) private readonly userRepo: Repository<User>,
+    private readonly configService: ConfigService,
   ) {}
 
-  async register(registerDetails: RegisterDto) {
-    const { email, password } = registerDetails;
+  async login(loginDetails: LoginDto) {
+    const { email, password } = loginDetails;
 
-    const password_hash = await bcrypt.hash(password, 10);
-    return await this.userRepo.insert({ email, password_hash });
+    const user = await this.userRepo.findOneBy({ email });
+    if (!user) {
+      throw new UnauthorizedException('incorrect email or password');
+    }
+
+    const { password_hash, ...userWithoutPasswordHash } = user;
+    const isMatched = await bcrypt.compare(password, password_hash);
+
+    if (!isMatched) {
+      throw new UnauthorizedException('incorrect email or password');
+    }
+
+    const token = jwt.sign(
+      userWithoutPasswordHash,
+      this.configService.get('JWT_SECRET'),
+      {
+        expiresIn: '1d',
+      },
+    );
+
+    return token;
+  }
+
+  async changePassword(
+    changePasswordDetails: ChangePasswordDto & { email: string },
+  ) {
+    const { newPassword, email } = changePasswordDetails;
+    const password_hash = await bcrypt.hash(newPassword, 10);
+
+    return await this.userRepo.update({ email }, { password_hash });
   }
 }

@@ -1,13 +1,41 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { RegisterDto } from './dto/register.dto';
+import { Body, Controller, Post, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { LoginDto } from './dto/login.dto';
+import { AllowUnauthorized } from '../core/decorators/allow-unauthorized.decorator';
+import { ConfigService } from '@nestjs/config';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService,
+  ) {}
 
-  @Post('register')
-  register(@Body() registerDetails: RegisterDto) {
-    return this.authService.register(registerDetails);
+  @Post('login')
+  @AllowUnauthorized()
+  async login(@Body() loginDetails: LoginDto, @Res() response) {
+    const token = await this.authService.login(loginDetails);
+
+    response
+      .cookie(this.configService.get('JWT_COOKIE_NAME'), token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+      })
+      .json({
+        token,
+      });
+  }
+
+  @Post('change-password')
+  changePassword(
+    @Body() changePasswordDetails: ChangePasswordDto,
+    @Req() request,
+  ) {
+    return this.authService.changePassword({
+      ...changePasswordDetails,
+      email: request.user.email,
+    });
   }
 }
