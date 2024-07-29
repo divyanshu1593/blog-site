@@ -9,6 +9,7 @@ import { User } from './entities/user.entity';
       database: 'db.sqlite3',
       entities: [User],
       synchronize: true,
+      logging: true,
     }),
   ],
 })
