@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog Site</title>
+</head>
+<body>
+  <form id="create-blog-form">
+    <label for="title">Title</label>
+    <input type="text" name="title" id="title">
+    <label for="content">Content</label>
+    <input type="text" name="content", id="content">
+    <input type="submit" value="create">
+  </form>
+  <script>
+    const createBlogForm = document.getElementById('create-blog-form');
+    createBlogForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const title = document.getElementById('title').value;
+      const content = document.getElementById('content').value;
+      const data = {
+       title,
+       content
+      };
+      const customHeaders = {
+          "Content-Type": "application/json",
+      }
+
+      fetch('http://localhost:3000/blog', {
+        method: "POST",
+        headers: customHeaders,
+        body: JSON.stringify(data),
+        credentials: 'include'
+      }).then((res, err) => {
+        return res.json()
+      }).then((res) => {
+        if (res.err) {
+          console.log(res);
+          alert('error happened');
+          return ;
+        }
+        window.location = 'http://localhost:4000/home.html';
+      })
+    })
+  </script>
+</body>
+</html>

@@ -42,7 +42,10 @@ export class AuthService {
       },
     );
 
-    return token;
+    return {
+      token,
+      userWithoutPasswordHash,
+    };
   }
 
   async changePassword(

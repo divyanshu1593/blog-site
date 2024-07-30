@@ -15,7 +15,8 @@ export class AuthController {
   @Post('login')
   @AllowUnauthorized()
   async login(@Body() loginDetails: LoginDto, @Res() response) {
-    const token = await this.authService.login(loginDetails);
+    const { token, userWithoutPasswordHash } =
+      await this.authService.login(loginDetails);
 
     response
       .cookie(this.configService.get('JWT_COOKIE_NAME'), token, {
@@ -25,6 +26,7 @@ export class AuthController {
       })
       .json({
         token,
+        userWithoutPasswordHash,
       });
   }
 

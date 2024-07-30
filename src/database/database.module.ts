@@ -10,7 +10,7 @@ import { Blog } from './entities/blog.entity';
       database: 'db.sqlite3',
       entities: [User, Blog],
       synchronize: true,
-      logging: true,
+      // logging: true,
     }),
   ],
 })
