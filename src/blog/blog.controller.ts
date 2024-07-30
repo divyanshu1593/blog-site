@@ -10,7 +10,7 @@ export class BlogController {
   createBlog(@Body() createBlogDetails: CreateBlogDto, @Req() request) {
     return this.blogService.createBlog({
       ...createBlogDetails,
-      email: request.user.email,
+      id: request.user.id,
     });
   }
 
