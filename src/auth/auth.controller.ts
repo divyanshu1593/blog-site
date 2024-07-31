@@ -40,4 +40,9 @@ export class AuthController {
       email: request.user.email,
     });
   }
+
+  @Post('logout')
+  logout(@Res() response) {
+    response.clearCookie(this.configService.get('JWT_COOKIE_NAME')).end();
+  }
 }

@@ -19,7 +19,6 @@ export class BlogService {
       user: { id },
     });
 
-    console.log(blog);
     return await this.blogRepo.save(blog);
   }
 
