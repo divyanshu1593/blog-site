@@ -10,6 +10,10 @@
   <button id="create-blog-btn">create blog</button>
   <button id="change-password-btn">change password</button>
   <button id="logout-btn">logout</button>
+  <form id="search-by-title">
+    <input type="text" placeholder="blog title" name="blog-search" id="blog-search">
+    <input type="submit" value="search">
+  </form>
   <div id="blogs"></div>
   <script>
     const urlParams = new URLSearchParams(window.location.search);
@@ -22,23 +26,7 @@
     }).then((res) => {
       return res.json();
     }).then((res) => {
-      for (const blog of res) {
-        const title = document.createElement('h1');
-        title.innerHTML = blog.title;
-        const blogOwner = document.createElement('p');
-        blogOwner.innerHTML = `written by: ${blog.user.email}`;
-        const content = document.createElement('p');
-        content.innerHTML = blog.content;
-
-        const blogDiv = document.createElement('div');
-        blogDiv.appendChild(title);
-        blogDiv.appendChild(blogOwner);
-        blogDiv.appendChild(content);
-        
-        const blogListDiv = document.getElementById('blogs');
-        blogListDiv.appendChild(blogDiv);
-        blogListDiv.appendChild(document.createElement('hr'))
-      }
+      displayBlogs(res);
     })
 
     const createBlogBtn = document.getElementById('create-blog-btn');
@@ -63,6 +51,49 @@
         window.location = `http://localhost:4000/index.html`;
       })
     });
+
+    const blogSearchForm = document.getElementById('search-by-title')
+    blogSearchForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const blogListDiv = document.getElementById('blogs');
+      const searchValue = document.getElementById('blog-search').value
+      blogListDiv.innerHTML = '';
+
+      fetch(`http://localhost:3000/blog?title=${searchValue}`, {
+        credentials: 'include'
+      }).then((res) => {
+        return res.json();
+      }).then((res) => {
+        if (res.err) {
+          console.log(res);
+          alert('error happened');
+          return ;
+        }
+        displayBlogs(res);
+      })
+
+      
+    })
+    function displayBlogs(blogArr) {
+      for (const blog of blogArr) {
+        const title = document.createElement('h1');
+        title.innerHTML = blog.blog_title;
+        const blogOwner = document.createElement('p');
+        blogOwner.innerHTML = `written by: ${blog.user_email}`;
+        const content = document.createElement('p');
+        content.innerHTML = blog.blog_content;
+
+        const blogDiv = document.createElement('div');
+        blogDiv.appendChild(title);
+        blogDiv.appendChild(blogOwner);
+        blogDiv.appendChild(content);
+        
+        const blogListDiv = document.getElementById('blogs');
+        blogListDiv.appendChild(blogDiv);
+        blogListDiv.appendChild(document.createElement('hr'));
+      }
+    }
   </script>
 </body>
 </html>

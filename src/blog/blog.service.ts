@@ -4,6 +4,8 @@ import { Blog } from '../database/entities/blog.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UUID } from 'crypto';
+import { SearchBlogDto } from './dto/search-blog.dto';
+import { User } from '../database/entities/user.entity';
 
 @Injectable()
 export class BlogService {
@@ -22,17 +24,13 @@ export class BlogService {
     return await this.blogRepo.save(blog);
   }
 
-  async getBlogs() {
-    return this.blogRepo.find({
-      relations: {
-        user: true,
-      },
-      select: {
-        user: {
-          id: true,
-          email: true,
-        },
-      },
-    });
+  async getBlogs(searchDetails: SearchBlogDto) {
+    const { title } = searchDetails;
+
+    return await this.blogRepo
+      .createQueryBuilder('blog')
+      .where(`blog.title like '%${title ?? ''}%'`)
+      .innerJoinAndSelect(User, 'user', 'blog.user.id = user.id')
+      .getRawMany();
   }
 }

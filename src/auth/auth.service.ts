@@ -18,10 +18,7 @@ export class AuthService {
   async login(loginDetails: LoginDto) {
     const { email, password } = loginDetails;
 
-    const user = await this.userRepo
-      .createQueryBuilder('user')
-      .where(`user.email = '${email}'`)
-      .getOne();
+    const user = await this.userRepo.findOneBy({ email });
 
     if (!user) {
       throw new UnauthorizedException('incorrect email or password');

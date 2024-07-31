@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
+import { SearchBlogDto } from './dto/search-blog.dto';
 
 @Controller('blog')
 export class BlogController {
@@ -15,7 +16,7 @@ export class BlogController {
   }
 
   @Get()
-  getBlogs() {
-    return this.blogService.getBlogs();
+  getBlogs(@Query() searchDetails: SearchBlogDto) {
+    return this.blogService.getBlogs(searchDetails);
   }
 }

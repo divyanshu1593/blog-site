@@ -6,11 +6,14 @@ import { Blog } from './entities/blog.entity';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: 'db.sqlite3',
+      type: 'postgres',
+      database: 'web-security',
+      password: 'password',
+      username: 'postgres',
+      port: 5432,
       entities: [User, Blog],
       synchronize: true,
-      // logging: true,
+      logging: true,
     }),
   ],
 })
