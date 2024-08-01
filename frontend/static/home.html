@@ -6,10 +6,12 @@
   <title>Blog Site</title>
 </head>
 <body>
-  <div id="welcome"></div>
-  <button id="create-blog-btn">create blog</button>
+  <div id="welcome" style="margin-top: 20px; margin-bottom: 20px;font-size: x-large;"></div>
+  <div  style="margin-top: 20px; margin-bottom: 20px;">
+    <button id="create-blog-btn">create blog</button>
   <button id="change-password-btn">change password</button>
   <button id="logout-btn">logout</button>
+  </div>
   <form id="search-by-title">
     <input type="text" placeholder="blog title" name="blog-search" id="blog-search">
     <input type="submit" value="search">
@@ -19,7 +21,7 @@
     const urlParams = new URLSearchParams(window.location.search);
     const user = Object.fromEntries(urlParams.entries());
     const welcomeDiv = document.getElementById('welcome');
-    welcomeDiv.innerText = `welcome ${user.email}`;
+    welcomeDiv.innerText = `welcome! ${user.email}`;
 
     fetch('http://localhost:3000/blog', {
       credentials: 'include'

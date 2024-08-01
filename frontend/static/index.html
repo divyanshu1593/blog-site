@@ -6,14 +6,17 @@
   <title>Blog Site</title>
 </head>
 <body>
+  <h1>Login Page</h1>
   <form id="login-form">
-    <label for="email">Email</label>
+    <label for="email">Email: </label>
     <input type="email" name="email" id="email">
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password">
-    <input type="submit">
+    <br>
+    <label for="password">Password: </label>
+    <input type="text" name="password" id="password">
+    <br>
+    <input type="submit" value="login">
   </form>
-  <a href="http://localhost:4000/register.html">register</a>
+  click <a href="http://localhost:4000/register.html">here</a> to register
   <script>
     const loginForm = document.getElementById('login-form');
     loginForm.addEventListener('submit', (event) => {
